@@ -128,14 +128,14 @@ class CWGAN_GP(keras.Model):
         self.gp_weight = gp_weight
                
         # Build model with explicit input shapes
-        self.build([(None, latent_dim), (None, window_size, num_conditions)])
+        # self.build([(None, latent_dim), (None, window_size, num_conditions)])
 
-    def build(self, input_shapes):
-        # Initialize with proper input shapes
-        noise_shape, condition_shape = input_shapes
-        self.noise_input = keras.Input(shape=noise_shape[1:], name="noise_input")
-        self.condition_input = keras.Input(shape=condition_shape[1:], name="condition_input")
-        super().build(input_shapes)
+    #def build(self, input_shapes):
+    #    # Initialize with proper input shapes
+    #    noise_shape, condition_shape = input_shapes
+    #    self.noise_input = keras.Input(shape=noise_shape[1:], name="noise_input")
+    #    self.condition_input = keras.Input(shape=condition_shape[1:], name="condition_input")
+    #    super().build(input_shapes)
     
     def call(self, inputs, training=None):
         # Unpack noise and conditions
@@ -192,6 +192,9 @@ class CWGAN_GP(keras.Model):
     def train_step(self, data):
         real_data, real_conditions = data  # Unpack data and conditions
 
+        real_data = tf.convert_to_tensor(real_data, dtype=tf.float32)
+        real_conditions = tf.convert_to_tensor(real_conditions, dtype=tf.float32)
+
         # Train critic
         for _ in range(self.n_critic):
             noise = tf.random.normal([tf.shape(real_data)[0], self.latent_dim])
@@ -233,13 +236,13 @@ class WGAN_GP(keras.Model):
         self.gp_weight = gp_weight
               
         # Explicit input specification
-        self.build((None, latent_dim))
+        # self.build((None, latent_dim))
 
-    def build(self, input_shape):
-        # Ensure generator is built with concrete input shape
-        if not self.generator.built:
-            self.generator.build(input_shape)
-        super().build(input_shape)
+    #def build(self, input_shape):
+    #    # Ensure generator is built with concrete input shape
+    #    if not self.generator.built:
+    #        self.generator.build(input_shape)
+    #    super().build(input_shape)
 
     def call(self, inputs, training=None):
         return self.generator(inputs, training=training)
@@ -436,6 +439,8 @@ class CWGANMonitor(keras.callbacks.Callback):
 
             # Generate synthetic data with conditions
             noise = tf.random.normal([num_samples, self.latent_dim])
+            conditions = tf.convert_to_tensor(conditions, dtype=tf.float32)
+            noise = tf.convert_to_tensor(noise, dtype=tf.float32)
             synthetic = self.model.generator([noise, conditions], training=False) 
             
             # Calculate metrics

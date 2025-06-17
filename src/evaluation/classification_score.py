@@ -4,6 +4,17 @@
 from tensorflow.keras import Sequential, layers
 from sklearn.model_selection import train_test_split
 import numpy as np
+from tensorflow.keras.layers import (
+    Conv1D,
+    Flatten,
+    Dense,
+    Conv1DTranspose,
+    Reshape,
+    Input,
+    Layer,
+)
+
+
 def transform_for_classification(data):
     """
     Correct transformation for feature-wise classification
@@ -26,7 +37,8 @@ def transform_for_classification(data):
 def build_classification_model(input_shape, num_classes):
     """CNN-based feature classifier"""
     model = Sequential([
-        layers.Conv1D(64, 3, activation='relu', input_shape=input_shape),
+        Input(shape=input_shape),
+        layers.Conv1D(64, 3, activation='relu'),
         layers.MaxPooling1D(2),
         layers.Conv1D(128, 3, activation='relu'),
         layers.GlobalAveragePooling1D(),
@@ -61,13 +73,7 @@ def classification_score(real_data, synthetic_data, num_classes=21):
         X_syn_cls, y_syn_cls, test_size=0.2, stratify=y_syn_cls)
 
     # Define classifier model
-    model = Sequential([
-        layers.Conv1D(64, 3, activation='relu', input_shape=(X_train_cls.shape[1], 1)),
-        layers.MaxPooling1D(2),
-        layers.Conv1D(128, 3, activation='relu'),
-        layers.GlobalAveragePooling1D(),
-        layers.Dense(num_classes, activation='softmax')
-    ])
+    model = build_classification_model((X_train_cls.shape[1], 1), num_classes)
 
     model.compile(loss='sparse_categorical_crossentropy',
                   optimizer='adam',

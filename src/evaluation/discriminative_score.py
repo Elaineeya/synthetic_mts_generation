@@ -72,7 +72,7 @@ def discriminative_score(real_data, synthetic_data):
     _, test_acc = discriminator.evaluate(
         (X_test, sl_test), y_test, verbose=0)
     
-    return np.abs(0.5 - test_acc)
+    return float(np.abs(0.5 - test_acc))
 
 
 

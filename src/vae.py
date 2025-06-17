@@ -191,6 +191,22 @@ class VAE_CNN(Model):
         self.decoder = self._get_decoder()
         self.compile(optimizer=Adam())
 
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "feat_dim": self.feat_dim,
+            "latent_dim": self.latent_dim,
+            "reconstruction_wt": self.reconstruction_wt,
+            "hidden_layer_sizes": self.hidden_layer_sizes
+        })
+        return config
+    
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config
+        )
+
     def _get_encoder(self):
         encoder_inputs = layers.Input(
             shape=(self.seq_len, self.feat_dim), name="encoder_input"
@@ -329,6 +345,25 @@ class TIME_VAE(Model):
         # Build decoder
         self.decoder = self._get_decoder()
         self.compile(optimizer=Adam())
+
+    def get_config(self):
+        config = super().get_config()
+        config.update({
+            "seq_len": self.seq_len,
+            "feat_dim": self.feat_dim,
+            "latent_dim": self.latent_dim,
+            "reconstruction_wt": self.reconstruction_wt,
+            "hidden_layer_sizes": self.hidden_layer_sizes,
+            "trend_poly": self.trend_poly,
+            "custom_seas": self.custom_seas,
+            "use_residual_conn": self.use_residual_conn
+        })
+        return config
+    
+    @classmethod
+    def from_config(cls, config):
+        return cls(**config
+        )
 
     def _get_encoder(self):
         encoder_inputs = layers.Input(

@@ -10,6 +10,15 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import GRU, Dense, TimeDistributed
 from sklearn.metrics import mean_absolute_error
 from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.layers import (
+    Conv1D,
+    Flatten,
+    Dense,
+    Conv1DTranspose,
+    Reshape,
+    Input,
+    Layer,
+)
 
 
 def all_feature_predictive_score_metrics(ori_data, generated_data):
@@ -28,7 +37,8 @@ def all_feature_predictive_score_metrics(ori_data, generated_data):
     
     # Build and train model
     model = Sequential([
-        GRU(64, return_sequences=True, input_shape=(lookback, n_features)),
+        Input(shape=(lookback, n_features))
+        GRU(64, return_sequences=True),
         Dense(n_features) # Predict all features at each time step
         #TimeDistributed(Dense(n_features))  
     ])
@@ -49,7 +59,7 @@ def all_feature_predictive_score_metrics(ori_data, generated_data):
     MAE_scores = [mean_absolute_error(y_test[i].flatten(), test_pred[i].flatten()) for i in range(n_samples)]
     predictive_score = np.mean(MAE_scores)
     
-    return predictive_score
+    return float(predictive_score)
     #return mae_score
 
 
@@ -80,7 +90,8 @@ def extract_time (data):
 def build_predictor(hidden_dim, max_seq_len, feature_dim):
     """Build a simple GRU-based predictor model."""
     model = tf.keras.Sequential([
-        GRU(hidden_dim, activation='tanh', return_sequences=True, input_shape=(max_seq_len - 1, feature_dim - 1)),
+        Input(shape=(max_seq_len - 1, feature_dim - 1)),  # Exclude last feature for input
+        GRU(hidden_dim, activation='tanh', return_sequences=True),
         Dense(1, activation='sigmoid')
     ])
     model.compile(optimizer=Adam(), loss='mae')
@@ -125,7 +136,7 @@ def last_feature_predictive_score_metrics(ori_data, generated_data):
     MAE_scores = [mean_absolute_error(Y_test[i], Y_pred[i]) for i in range(no)]
     predictive_score = np.mean(MAE_scores)
 
-    return predictive_score
+    return float(predictive_score)
 
 
 
@@ -188,7 +199,7 @@ def feature_wise_predictive_score_metrics(ori_data, generated_data):
     # Calculate average MAE
     avg_mae = np.mean(list(mae_scores.values()))
     
-    return avg_mae
+    return float(avg_mae)
 
 
 
