@@ -36,10 +36,10 @@ This folder contains all the **preprocessed and sampled datasets** used througho
 
 This folder provides utility scripts for **data extraction** and **initial preprocessing**:
 
-- `entsoe_sample_extraction.py`:  
+- `loading_data.ipynb`:  
   Sample code to extract raw electricity data from the ENTSO-E platform using their API.
 
-- `exploration_and_preprocessing.py`:  
+- `explore_entsoe_data.ipynb`:  
   Includes:
   - **Exploratory analysis**: Generates country-wise heatmaps to visualize electricity trends over time.
   - **Basic preprocessing**: Handles missing data and generates datasets with various sample sizes (2%, 10%, 20%, 50%, 100%).
